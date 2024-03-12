@@ -51,10 +51,7 @@
 # ver 2
 # 상자의 일부 칸에는 토마토가 들어있지 않을 수도 있음 
 # 1: 익은 토마토, 0: 익지 않은 토마토, -1: 토마토가 들어있지 않은 칸 
-
-
 # -1 이 0으로 처리는 되는 걸 방지하기 위해 farm 을 그래도 받아옴  
-
 from collections import deque
 dr = [1, -1, 0, 0]
 dc = [0, 0, 1, -1]
@@ -76,7 +73,8 @@ def bfs(visited, riped_tomatoes, farm):
                 Q.append((nr, nc))
                 visited[nr][nc] = visited[r][c] + 1
                 move = visited[nr][nc] - 1
-    
+                
+    # 토마토 방문? 체크에 0이 있을 경우 -1 리턴 
     for v in visited:
         if 0 in v:
             return -1
