@@ -69,77 +69,128 @@
 # print(ans)
 
 
-# ver 2 
-# 벽을 세울 위치 튜플 리스트 -> 길이 3 -> DFS (조합)
-# 바이러스 위치 튜플 리스트 -> BFS -> 바이러스 퍼지게 하기 
+# # ver 2 
+# # 벽을 세울 위치 튜플 리스트 -> 길이 3 -> DFS (조합)
+# # 바이러스 위치 튜플 리스트 -> BFS -> 바이러스 퍼지게 하기 
+# from collections import deque
+# import copy 
+# dr = [1, -1, 0, 0]
+# dc = [0, 0, 1, -1]
+
+
+# def BFS(Q, arr):  # Q 는 바이러스, arr 은 lab
+#    cnt = len(virus)
+
+#    while Q: 
+#       cr, cc = Q.popleft()
+#       for d in range(4):
+#          nr = cr + dr[d]
+#          nc = cc + dc[d]
+#          if 0 <= nr < R and 0 <= nc < C:
+#             if arr[nr][nc] == 0:
+#                arr[nr][nc] = 2 
+#                cnt += 1
+
+#    return cnt
+
+
+# def DFS(k, r, c):
+#    global maxV, wall
+
+#    if k == 3:
+#       virus_cnt = BFS(virus, copy.deepcopy(lab))
+#       wall += k
+#       if maxV > (R * C - virus_cnt - wall):
+#          return  
+#       maxV = max(maxV, (R * C - virus_cnt - wall))
+#       return 
+   
+#    for nr in range(R):
+#       for nc in range(C):
+#          if 0 <= nr < R and 0 <= nc < C:
+#             if lab[nr][nc] == 0:
+#                lab[nr][nc] = 1
+#                DFS(k + 1, nr, nc)
+#                lab[nr][nc] = 0
+
+
+# R, C = map(int, input().split())
+# lab = [list(map(int, input().split())) for _ in range(R)]
+# oriLabo = copy.deepcopy(lab) # 초기화용 
+# maxV = 0
+# wall = 0
+
+# virus = deque()
+# for r in range(R):
+#    for c in range(C):
+#       if lab[r][c] == 2:
+#          virus.append((r, c))
+#       elif lab[r][c] == 1:
+#          wall += 1
+      
+
+# DFS(0, 0, 0)
+# print(maxV)
+
+
+
+# ver 3
 from collections import deque
-import copy 
 dr = [1, -1, 0, 0]
 dc = [0, 0, 1, -1]
 
+def BFS(virus):
+   global maxV
+   visited = [[0] * C for _ in range(R)]
+   for q in virus:
+      visited[q[0]][q[1]] = 1
 
-def BFS(Q, arr):  # Q 는 바이러스, arr 은 lab
-   cnt = len(virus)
+   Q = deque(virus)
 
-   while Q: 
+   while Q:
       cr, cc = Q.popleft()
       for d in range(4):
          nr = cr + dr[d]
          nc = cc + dc[d]
          if 0 <= nr < R and 0 <= nc < C:
-            if arr[nr][nc] == 0:
-               arr[nr][nc] = 2 
-               cnt += 1
+            if not visited[nr][nc] and not lab[nr][nc]:
+               visited[nr][nc] = 1
+               Q.append((nr, nc))
+
+   cnt = 0
+   for r in range(R):
+      for c in range(C):
+         if not lab[r][c] and not visited[r][c]:
+            cnt += 1
 
    return cnt
 
+def DFS(lv, r, c):
+   global maxV, virus
 
-def DFS(k, r, c):
-   global maxV, wall
+   if lv == 3:
+      cnt = BFS(virus)
+      if maxV > cnt:
+         return 
+      maxV = max(maxV, cnt)
+      return
 
-   if k == 3:
-      virus_cnt = BFS(virus, copy.deepcopy(lab))
-      wall += k
-      if maxV > (R * C - virus_cnt - wall):
-         return  
-      maxV = max(maxV, (R * C - virus_cnt - wall))
-      return 
-   
-   for nr in range(R):
-      for nc in range(C):
-         if 0 <= nr < R and 0 <= nc < C:
-            if lab[nr][nc] == 0:
-               lab[nr][nc] = 1
-               DFS(k + 1, nr, nc)
-               lab[nr][nc] = 0
+   for r in range(R):
+      for c in range(C):
+         if not lab[r][c]:
+            lab[r][c] = 1
+            DFS(lv + 1, r, c)
+            lab[r][c] = 0  
 
 
 R, C = map(int, input().split())
 lab = [list(map(int, input().split())) for _ in range(R)]
-oriLabo = copy.deepcopy(lab) # 초기화용 
+virus = [(r, c) for r in range(R) for c in range(C) if lab[r][c] == 2]
+zero = [(r, c) for r in range(R) for c in range(C) if lab[r][c] == 0]
 maxV = 0
-wall = 0
-
-virus = deque()
-for r in range(R):
-   for c in range(C):
-      if lab[r][c] == 2:
-         virus.append((r, c))
-      elif lab[r][c] == 1:
-         wall += 1
-      
 
 DFS(0, 0, 0)
 print(maxV)
-
-
-
-
-
-
-
-
-
 
 
 
